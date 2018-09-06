@@ -79,21 +79,22 @@ bool prev_test() {
 
 bool Buf_FileTest() {
 	bool result = true;
-	Buffer_F_Fld buffer;
-	Recording::InitBuffer(buffer);
-	Buf_File_Manager BFM(buffer);
-	BTree<string> bt(buffer, 4); //asdsad
+	Buffer_F_Fld recordbuffer;
+	Buffer_F_Fld btreebuffer;
+	Recording::InitBuffer(recordbuffer);
+	Buf_File_Manager BFM(recordbuffer);
+	BTree<string> bt(btreebuffer, 4); //asdsad
 
 	result &= BFM.Create("data.txt", ios::in | ios::out);
 	Recording* r = new Recording("LON", "2312", "Romeo and Juliet", "Prokofiev", "Maazel");
 	cout << *r << endl;
-	r->Pack(buffer);
+	r->Pack(recordbuffer);
 	int recaddr = BFM.Write();
-	//result = bt.Insert(r->GetKey(), recaddr); //asdasd
+	result = bt.Insert(r->GetKey(), recaddr); //asdasd
 	BFM.Close();
 	BFM.Open("data.txt", ios::in | ios::out);
 	BFM.Read();
-	r->Unpack(buffer);
+	r->Unpack(recordbuffer);
 	cout << *r;
 	//내생각에 버퍼파일은 여기에 써주세요 하면 지가 처리해야지 버퍼에 쓰고 
 	//그 뒤에 write를 하면 그냥

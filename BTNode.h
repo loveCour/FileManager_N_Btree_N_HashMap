@@ -170,7 +170,7 @@ BTreeNode<keyType> *CreateBTreeNode(int maxKeys, int unique)
 
 template <class keyType>
 int BTreeNode<keyType>::Pack(IOBuffer &buffer) const
-{
+{//to do pack 할 때 고정크기 버퍼에 맞게 고쳐야한다.
 	int result;
 	buffer.Clear();
 	result = buffer.Pack(&this->NumKeys);

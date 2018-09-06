@@ -32,7 +32,7 @@ class BTree
 // this is the full version of the BTree
 {
 public:
-	BTree(IOBuffer &Buffer, int order, int keySize = sizeof(keyType), int unique = 1);
+	BTree(Buffer_F_Fld &Buffer, int order, int keySize = sizeof(keyType), int unique = 1);
 	~BTree();
 	int Open(char *name, int mode);
 	int Create(const char *name, int mode);
@@ -61,7 +61,7 @@ protected:
 };
 
 template <class keyType>
-BTree<keyType>::BTree(IOBuffer &Buffer, int order, int keySize, int unique)
+BTree<keyType>::BTree(Buffer_F_Fld &Buffer, int order, int keySize, int unique)
 	: BTreeFile(Buffer), Root(order)
 	//파일에서의 노드 주소, order갯수만큼의 키, order갯수만큼의 주소(레코드파일의)
 	//이들 각각이 하나의 필드이다.
