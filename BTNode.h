@@ -52,7 +52,7 @@ public:
 		}
 		return result;
 	}
-	static int InitBuffer(Buffer_F_Fld &buffer, int maxKeys, int keySize = sizeof(keyType));
+	static int InitBuffer(Buffer_F_Fld &buffer, int maxKeys);
 protected:
 	int NextNode;	// address of next node at same level
 	int RecAddr;	// address of this node in the BTree file
@@ -173,11 +173,11 @@ int BTreeNode<keyType>::Pack(IOBuffer &buffer) const
 {//to do pack 할 때 고정크기 버퍼에 맞게 고쳐야한다.
 	int result;
 	buffer.Clear();
-	result = buffer.Pack(&this->NumKeys);
+	result = buffer.PackingNextField(&this->NumKeys);
 	for (int i = 0; i < this->NumKeys; i++)
 	{// note only pack the actual keys and recaddrs
-		result = result && buffer.Pack(&this->Keys[i]);
-		result = result && buffer.Pack(&this->RecAddrs[i]);
+		result = result && buffer.PackingNextField(&this->Keys[i]);
+		result = result && buffer.PackingNextField(&this->RecAddrs[i]);
 	}
 	return result;
 }
@@ -186,25 +186,29 @@ template <class keyType>
 int BTreeNode<keyType>::Unpack(IOBuffer &buffer)
 {
 	int result;
-	result = buffer.Unpack(&this->NumKeys);
+	result = buffer.UnpackingNextField(&this->NumKeys);
 	for (int i = 0; i < this->NumKeys; i++)
 	{// note only pack the actual keys and recaddrs
-		result = result && buffer.Unpack(&this->Keys[i]);
-		result = result && buffer.Unpack(&this->RecAddrs[i]);
+		result = result && buffer.UnpackingNextField(&this->Keys[i]);
+		result = result && buffer.UnpackingNextField(&this->RecAddrs[i]);
 	}
 	return result;
 }
 
 template <class keyType>
-int BTreeNode<keyType>::InitBuffer(Buffer_F_Fld &buffer, int maxKeys, int keySize)
+int BTreeNode<keyType>::InitBuffer(Buffer_F_Fld &buffer, const int maxKeys)
 {// initialize a buffer for the btree node
-	buffer.AddField(sizeof(int));
-	for (int i = 0; i < maxKeys; i++)
-	{
-		buffer.AddField(keySize);
-		buffer.AddField(sizeof(int));
+	const int numOfField = maxKeys * 2 + 1;
+	int *sizes = new int[numOfField];
+	sizes[0] = sizeof(int);//이 노드의 현재 레코드의 갯수
+	for (int i = 1; i < numOfField; i += 2){
+		sizes[i] = sizeof(keyType);//레코드의 키
+		sizes[i+1] = sizeof(int);// 이 키의 레코드의 파일에 저장된 주소
 	}
-	return 1;
+	int bufferSize = maxKeys * (sizeof(keyType) + sizeof(int)) + sizeof(int);
+	int result = buffer.Init(bufferSize, numOfField, sizes);
+	delete[] sizes;
+	return result;
 }
 
 

@@ -117,16 +117,19 @@ int Buffer_F_Fld::PackingNextField(const void *field, int fieldSize)
 		return -1;
 	int packSize = fieldSizes[nextField]; // number bytes to be packed
 	if (fieldSize > packSize) return -1;
+	if (fieldSize == -1) fieldSize = packSize;
 	memcpy(&buffer[nextByte], field, fieldSize); // move bytes to buffer
 	nextByte += fieldSize;
-	int remainSize= packSize - fieldSize;
-	char *tmp = new char[remainSize];
-	for (int i =0 ; i < remainSize; i++) {
-		tmp[i] = '0';
+	int remainSize = packSize - fieldSize;
+	if (remainSize > 0) {
+		char *tmp = new char[remainSize];
+		for (int i = 0; i < remainSize; i++) {
+			tmp[i] = '0';
+		}
+		memcpy(&buffer[nextByte], tmp, remainSize);
+		delete tmp;
+		nextByte += remainSize;
 	}	
-	memcpy(&buffer[nextByte], tmp, remainSize);
-	delete tmp;
-	nextByte += remainSize;
 	nextField++;
 	if (nextField == numFields) // all fields packed
 	{
@@ -172,7 +175,6 @@ bool Buffer_F_Fld::Init(int maxBytes, int _MaxFields, int *_fieldSizes)
 	Buffer_F::Init(maxBytes);
 	// initialize
 	if (!_fieldSizes) return false;
-	isInit = true;
 	Clear();
 	if (_MaxFields < 0) maxFields = 0;
 	maxFields = _MaxFields;
@@ -182,6 +184,7 @@ bool Buffer_F_Fld::Init(int maxBytes, int _MaxFields, int *_fieldSizes)
 	// add fields
 	for (int j = 0; j < maxFields; j++)
 		AddField(_fieldSizes[j]);
+	isInit = true;
 	return true;
 }
 

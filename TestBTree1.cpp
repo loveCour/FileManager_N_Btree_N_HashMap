@@ -22,8 +22,8 @@ int RetrieveRecording(Recording &recording, string key, BTree<string> &Recording
 	return result;
 }
 */
-
-int main(int argc, char * argv)
+/*
+int amain(int argc, char * argv)
 {
 	int result;
 	int choice;
@@ -32,8 +32,8 @@ int main(int argc, char * argv)
 	Buffer_F_Fld* Buffer = new Buffer_F_Fld();// not initialized
 	RecordFile<Recording> Recfile(*Buffer);
 	Recfile.Create("recording.dat", ios::out);	
-	BTree<string> bt(BTreeSize);
-	result = bt.Create("btindex.dat", ios::in | ios::out);
+	//BTree<string> bt(BTreeSize);
+	//result = bt.Create("btindex.dat", ios::in | ios::out);
 	if (!result) { cout << "Creating of BTree index fails" << endl; return 0; }
 
 	do
@@ -64,7 +64,7 @@ int main(int argc, char * argv)
 				R[i]->Pack(*Buffer);
 				recaddr = Recfile.Write(*R[i]);
 				cout << "Recording R[" << i << "] at recaddr " << recaddr << endl;
-				result = bt.Insert(R[i]->IdNum, recaddr);
+				//result = bt.Insert(R[i]->IdNum, recaddr);
 			}
 			break;
 		case 2:
@@ -88,4 +88,4 @@ int main(int argc, char * argv)
 		}
 	} while (choice != 5);
 	return 1;
-}
+}*/

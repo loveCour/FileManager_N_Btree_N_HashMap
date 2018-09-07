@@ -33,7 +33,7 @@ public:
 		}		
 	}
 	~IOBuffer() {
-		delete[] buffer;
+		if(buffer != nullptr) delete[] buffer;
 	}
 	virtual int PackingNextField(const void *field, int fieldSize = -1) = 0; // Pack 'A next field'
 	virtual int UnpackingNextField(void *field, int fieldSize = -1) = 0; // Unpack 'A next field'
